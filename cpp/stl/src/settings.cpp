@@ -7,6 +7,7 @@ Settings::Settings()
 {
   _verbose = false;
   _debug = false;
+  _daemon = true;
   _logLevel = LOG_INFO;
 }
 
@@ -14,7 +15,7 @@ void	Settings::init(int argc, char* argv[])
 {
   int	opt;
 
-  while ((opt = getopt(argc, argv, "hvc:")) != -1)
+  while ((opt = getopt(argc, argv, "hgdvc:")) != -1)
     {
       switch (opt)
 	{
@@ -26,6 +27,12 @@ void	Settings::init(int argc, char* argv[])
 	  break;
 	case 'g':
 	  _debug = true;
+	  break;
+	case 'd':
+	  _daemon = false;
+	  break;
+	case 'c':
+	  _confFile = optarg;
 	  break;
 	default:
 	  usage(argc, argv);
@@ -40,6 +47,8 @@ void	Settings::usage(int argc, char* argv[])
   std::cout << "-h : show help." << std::endl;
   std::cout << "-v : verbose mode." << std::endl;
   std::cout << "-g : debug mode." << std::endl;
+  std::cout << "-d : no daemon mode mode." << std::endl;
+  std::cout << "-c [File] : set configuration file." << std::endl;
 }
 
 bool	Settings::isVerbose() const

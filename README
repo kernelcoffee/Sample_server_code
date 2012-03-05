@@ -11,7 +11,6 @@ STL
  - No use of any special libary of any kind.
  - Objective is to work on any kind of linux plateforms.
 
-
 FEATURE
 This will be the mandatory features each server will have.
 
@@ -29,8 +28,8 @@ This will be the mandatory features each server will have.
       - ON accept
       	- new thread for read
 	  - read into a buffer
-	  - treat data
-	  - remove treated data out of the buffer
+	  - process data
+	  - remove processed data out of the buffer
 	- new thread for write
 	  - keep looking into a write_buffer
 	  - if data then send

@@ -20,6 +20,7 @@ public:
 private:
   bool		_verbose;
   bool		_debug;
+  bool		_daemon;
   std::string	_confFile;
   std::string	_logFile;
   int		_logLevel;
