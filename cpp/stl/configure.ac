@@ -6,7 +6,6 @@ AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
 
 AM_INIT_AUTOMAKE
 
-AC_CONFIG_SRCDIR([settings.h])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -21,5 +20,6 @@ AC_CHECK_HEADERS([stdlib.h])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+		src/Makefile])
 AC_OUTPUT

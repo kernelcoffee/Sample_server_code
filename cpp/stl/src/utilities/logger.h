@@ -1,62 +1,49 @@
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef __LOGMANAGER_HEADER_H__
+#define __LOGMANAGER_HEADER_H__
+
+#include "singleton.h"
 
 #include <string>
+#include <fstream>
+
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#else
+#define LOG_CRIT    2
+#define LOG_ERR     3
+#define LOG_WARNING 4
+#define LOG_NOTICE  5
+#define LOG_INFO    6
+#define LOG_DEBUG   7
+#endif
+
+#define LOG_CONN    8
 
 /**
- * LOG_CRIT     This is catastrophic. Basically, the program can not recover
- *              from this. If you're going to log at this level provide
- *              as much information as possible.
- *
- * LOG_ERR      Okay, something bad happened. We can recover from this.
- *              This should be for things like when we cannot create
- *              a socket, or out of memory.
- *
- * LOG_WARNING  There is condition which will change the behaviour of
- *              the program from what is expected. For example, somebody did
- *              not specify a port for a socket.
- *
- * LOG_NOTICE   This is for a special condition. Nothing has gone wrong, but
- *              it is more important than the common LOG_INFO level.
- *              It is used for actions like creating/destroying children,
- *              unauthorized access, signal handling, etc.
- *
- * LOG_INFO     Everything else ends up here. Logging for incoming
- *              connections, denying due to filtering rules, unable to
- *              connect to remote server, etc.
- *
- * LOG_DEBUG    The default debug mode level for developping goodness.
+ * This is the logging Class for maintenance, debug, etc.
+ * it is able to display messages on console output and in a log file
+ * set by the configuration file.
  **/
 
-const static QString DEFAULT_LOG_FILE = "logFile";	///< Log file name
-const static QString DEFAULT_LOG_EXT = "log";
-
-enum	logLevel {
-	LOG_CRIT,
-	LOG_ERR,
-	LOG_WARNING,
-	LOG_NOTICE,
-	LOG_INFO,
-	LOG_DEBUG
-};
-
-class Logger : public	Singleton<Logger>
+class Logger : public Singleton<Logger>
 {
-	friend class Singleton<Logger>;
+    friend class Singleton<Logger>;
 
 public:
-	static void	log(const string &message, logLevel level = LOG_INFO);
+  static void log(const std::string &message, int level = LOG_INFO);
+  static void debug(const std::string &message, int level = LOG_DEBUG);
+  static void setToDebug(bool debug);
+
 protected:
     Logger();
-	~Logger();
+    ~Logger();
 private:
-	void		update(string msg, logLevel level);
-	string		getLogFileName();
-	string		getLogPrefix();
-	string		getLogHeader();
-	string		getLogFilePath();
-
-	string		_logFilePath;
+  void		 initLogFile();
+  int            updateLog(std::string msg, int level);
+  std::string    logHeader() const;
+  std::string    logFileName() const;
+  
+  std::ofstream   _logFile;
+  bool            _debug;
 };
-
-#endif // LOGGER_HPP
+#endif /*__LOGMANAGER_HEADER_H__*/

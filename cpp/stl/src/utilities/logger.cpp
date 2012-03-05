@@ -1,52 +1,62 @@
-#include "logger.hpp"
+#include "logger.h"
+#include "settings.h"
 
-static const QString	logLevel_str[] = {
-	"CRITICAL",
-	"ERROR",
-	"WARNING",
-	"NOTICE",
-	"INFO",
-	"DEBUG"
-};
+#include <iostream>
+
+/**
+ * used for indentification into the log file
+ **/
+
+static const char* syslog_level[] = {
+    NULL,
+    NULL,
+    "CRITICAL",
+    "ERROR",
+    "WARNING",
+    "NOTICE",
+    "INFO",
+    "DEBUG",
+    "CONNECT"
+    };
 
 Logger::Logger()
 {
-  // Create or open log file
 }
 
 Logger::~Logger()
 {
+  this->_logFile.close();
 }
 
-void	Logger::log(const string &message, logLevel level)
+void Logger::log(const std::string &message, int level)
 {
-	Logger::instance()->update(message, level);
+    if (level <= Settings::instance()->getLogLevel())
+      {
+	if (Settings::instance()->isVerbose())
+	  std::cout << syslog_level[level] << " : " << message << std::endl;
+	Logger::instance()->updateLog(message, level);
+      }
 }
 
-void	Logger::update(string msg, logLevel level)
+void	Logger::initLogFile()
 {
-	string	logMessage;
+  Settings* params = Settings::instance();
 
-	logMessage = getLogPrefix();
-	logMessage += logLevel_str[level] + " : " + msg + "\n";
-
-	//qDebug() << logLevel_str[level] << " : " << msg;
-	//	_logFile->write(logMessage.toAscii());
-	//_logFile->flush();
+  this->_logFile.open(params->getLogFile().c_str());
+  this->_logFile << logHeader() << std::endl;
+  this->_logFile << params->getLogFile() << std::endl;
 }
 
-std::string	Logger::getLogFileName()
+int Logger::updateLog(std::string msg, int level)
 {
-  return DEFAULT_LOG_DIR + "/" + DEFAULT_LOG_FILE + "_" + QDateTime::currentDateTime().toString("yyyyMMdd") + "." + DEFAULT_LOG_EXT;
-  return "";
+  if (this->_logFile.is_open())
+    this->_logFile << syslog_level[level] << " : " << msg << std::endl;
+  else
+    Logger::instance()->initLogFile();
+  return 0;
 }
 
-std::string	Logger::getLogPrefix()
+std::string Logger::logHeader() const
 {
-	return "<" + QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd-hh:mm:ss") + "> : ";
-}
-
-std::string	Logger::getLogHeader()
-{
-	return "\n# -- Starting new session --";
+  return "# ";
 }

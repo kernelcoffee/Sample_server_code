@@ -7,6 +7,11 @@ WHY ?
 Because i'm tired of rewriting the same code over and over.
 This give a base to start a new server side software.
 
+STL
+ - No use of any special libary of any kind.
+ - Objective is to work on any kind of linux plateforms.
+
+
 FEATURE
 This will be the mandatory features each server will have.
 
